@@ -3,7 +3,7 @@ import { Plus, Layout, GripVertical } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "motion/react";
 import { StickyNote } from "./StickyNote";
 import { StickyNoteData, AgeTab, AGE_TABS, STICKY_NOTE_COLORS } from "../types";
-import { cn } from "../lib/utils";
+import { ... } from "./utils";
 
 interface BoardProps {
   userAge: number;
