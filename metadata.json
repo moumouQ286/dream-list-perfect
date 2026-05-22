@@ -1,0 +1,6 @@
+{
+  "name": "Dream Board / 人生夢想清單",
+  "description": "A bilingual digital sticky note board to visualize and track your life goals across different decades.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

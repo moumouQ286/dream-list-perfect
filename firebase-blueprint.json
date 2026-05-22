@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "UserSettings": {
+      "title": "User Settings",
+      "description": "Stores user-specific settings like age and onboarding status.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "age": { "type": "integer" },
+        "onboardingComplete": { "type": "boolean" }
+      },
+      "required": ["userId", "age", "onboardingComplete"]
+    },
+    "StickyNote": {
+      "title": "Sticky Note",
+      "description": "Represents a digital sticky note on the dream board.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "ageTab": { "type": "string", "enum": ["20s", "30s", "40s", "50s", "60s+"] },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "title": { "type": "string" },
+        "titleCompleted": { "type": "boolean" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": { "type": "string" },
+              "completed": { "type": "boolean" }
+            }
+          }
+        },
+        "color": { "type": "string" },
+        "drawData": { "type": "string", "description": "Base64 encoded image or path data" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "ageTab", "x", "y", "width", "height", "color"]
+    }
+  },
+  "firestore": {
+    "userSettings/{userId}": {
+      "schema": "UserSettings",
+      "description": "User settings document"
+    },
+    "stickyNotes/{noteId}": {
+      "schema": "StickyNote",
+      "description": "Collection of all sticky notes"
+    }
+  }
+}

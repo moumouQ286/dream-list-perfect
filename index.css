@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Shadows+Into+Light&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-hand: "Shadows Into Light", cursive;
+  
+  --color-ios-bg: #F2F2F7;
+  --color-ios-label: #1C1C1E;
+  --color-ios-secondary: #8E8E93;
+  --color-ios-separator: #D1D1D6;
+  --color-ios-blue: #007AFF;
+}
+
+body {
+  background-color: var(--color-ios-bg);
+  color: var(--color-ios-label);
+}
