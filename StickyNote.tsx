@@ -13,7 +13,7 @@ import {
   Paintbrush
 } from "lucide-react";
 import { StickyNoteData, STICKY_NOTE_COLORS, BRUSH_COLORS } from "../types";
-import { cn } from "../lib/utils";
+import { cn } from "../utils";
 
 interface StickyNoteProps {
   data: StickyNoteData;
