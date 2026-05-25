@@ -19,7 +19,6 @@ export default function App() {
   const [showAllNotes, setShowAllNotes] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Load from local storage
   useEffect(() => {
     const savedUser = localStorage.getItem(STORAGE_KEY_USER);
     if (savedUser) {
@@ -28,22 +27,24 @@ export default function App() {
       setOnboardingComplete(onboardingComplete);
       if (title) setBoardTitle(title);
       if (subtitle) setBoardSubtitle(subtitle);
-      if (savedTabs) setTabs(savedTabs);
-      
-      // Set initial tab to current decade
+
       const decade = Math.floor(age / 10) * 10;
       const initialTab = `${decade}s`;
-      
-      const combinedTabs = savedTabs || tabs;
+
+      let combinedTabs = savedTabs || AGE_TABS;
+
       if (decade > 60 && !combinedTabs.includes(initialTab)) {
-        setTabs([...combinedTabs, initialTab]);
-      } else if (savedTabs) {
-        setTabs(savedTabs);
+        combinedTabs = [...combinedTabs, initialTab];
       }
-      
-      setCurrentTab(initialTab);
+
+      setTabs(combinedTabs);
+
+      // ✅ 確保 currentTab 存在於實際的分頁清單中
+      const validTab = combinedTabs.includes(initialTab)
+        ? initialTab
+        : combinedTabs[0];
+      setCurrentTab(validTab);
     } else {
-      // Force empty state check for first visit
       setCurrentTab("20s");
     }
 
@@ -51,15 +52,14 @@ export default function App() {
     if (savedNotes) {
       setNotes(JSON.parse(savedNotes));
     }
-    
+
     setInitialized(true);
   }, []);
 
-  // Save to local storage
   useEffect(() => {
     if (!initialized) return;
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify({ 
-      age: userAge, 
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify({
+      age: userAge,
       onboardingComplete,
       title: boardTitle,
       subtitle: boardSubtitle,
@@ -71,16 +71,19 @@ export default function App() {
   const handleOnboardingComplete = (age: number) => {
     setUserAge(age);
     setOnboardingComplete(true);
-    
+
     const decade = Math.floor(age / 10) * 10;
     const initialTab = `${decade}s` as AgeTab;
-    
-    // Ensure the initial tab exists in the list if it's beyond 60s
-    if (decade > 60 && !tabs.includes(initialTab)) {
-      setTabs([...tabs, initialTab]);
+
+    let newTabs = [...tabs];
+    if (decade > 60 && !newTabs.includes(initialTab)) {
+      newTabs = [...newTabs, initialTab];
+      setTabs(newTabs);
     }
-    
-    setCurrentTab(initialTab);
+
+    // ✅ 確保 currentTab 存在於分頁清單中
+    const validTab = newTabs.includes(initialTab) ? initialTab : newTabs[0];
+    setCurrentTab(validTab);
   };
 
   const handleAddTab = (newTab: AgeTab) => {
@@ -95,7 +98,6 @@ export default function App() {
     if (currentTab === oldTab) {
       setCurrentTab(newLabel);
     }
-    // Update notes to match new tab label
     setNotes(notes.map(n => n.ageTab === oldTab ? { ...n, ageTab: newLabel } : n));
   };
 
@@ -107,17 +109,16 @@ export default function App() {
     if (tabs.length <= 1) return;
     const newTabs = tabs.filter(t => t !== tabToDelete);
     setTabs(newTabs);
-    
-    if (currentTab === tabToDelete) {
-      // Find the best fallback tab (last one in the remaining list)
-      const lastAvailableTab = newTabs[newTabs.length - 1];
-      setCurrentTab(lastAvailableTab);
+
+    // ✅ 刪除分頁後確保 currentTab 切換到有效分頁
+    if (currentTab === tabToDelete || !newTabs.includes(currentTab)) {
+      setCurrentTab(newTabs[0]);
     }
+
     setNotes(notes.filter(n => n.ageTab !== tabToDelete));
   };
 
   const handleAddNote = () => {
-    // Add offset based on notes count to avoid perfect overlap
     const offset = (notes.length % 10) * 20;
     const newNote: StickyNoteData = {
       id: Math.random().toString(36).substring(2, 9),
@@ -146,25 +147,24 @@ export default function App() {
       const updated = prev.map((n) => {
         if (n.id === id) {
           const newNote = { ...n, ...updates, updatedAt: Date.now() };
-          
-          // Check if newly completed
+
           const wasAllCompleted = n.titleCompleted && n.items.every(i => i.completed);
           const isAllCompletedNow = newNote.titleCompleted && newNote.items.every(i => i.completed);
-          
+
           if (isAllCompletedNow && !wasAllCompleted) {
-             confetti({
-               particleCount: 150,
-               spread: 70,
-               origin: { y: 0.6 },
-               colors: STICKY_NOTE_COLORS
-             });
+            confetti({
+              particleCount: 150,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: STICKY_NOTE_COLORS
+            });
           }
-          
+
           return newNote;
         }
         return n;
       });
-      // Move the updated/clicked note to the end of the array to bring it to front
+
       if (updates.updatedAt) {
         const index = updated.findIndex(n => n.id === id);
         if (index > -1) {
