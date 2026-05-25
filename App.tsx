@@ -3,6 +3,7 @@ import confetti from "canvas-confetti";
 import { Onboarding } from "./Onboarding"
 import { Board } from "./Board"
 import { StickyNote } from "./StickyNote"
+import { AGE_TABS, AgeTab, StickyNoteData, STICKY_NOTE_COLORS } from "./types";
 
 const STORAGE_KEY_USER = "dream_board_user";
 const STORAGE_KEY_NOTES = "dream_board_notes";
