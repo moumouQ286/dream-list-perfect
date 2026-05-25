@@ -2,7 +2,7 @@ import React from "react";
 import { Plus, Layout, GripVertical } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "motion/react";
 import { StickyNote } from "./StickyNote";
-import { StickyNoteData, AgeTab, AGE_TABS, STICKY_NOTE_COLORS } from "../types";
+import { StickyNoteData, AgeTab, AGE_TABS, STICKY_NOTE_COLORS } from "./types";
 import { cn } from "./utils";
 
 interface BoardProps {
