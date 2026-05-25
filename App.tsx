@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import Onboarding from "./Onboarding"
-import Board from "./Board"
-import StickyNote from "./StickyNote"
+import { Onboarding } from "./Onboarding"
+import { Board } from "./Board"
+import { StickyNote } from "./StickyNote"
 
 const STORAGE_KEY_USER = "dream_board_user";
 const STORAGE_KEY_NOTES = "dream_board_notes";
