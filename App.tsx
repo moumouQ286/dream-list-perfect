@@ -244,7 +244,7 @@ export default function App() {
       />
 
       {/* ✅ 匯出／匯入按鈕（固定在右下角） */}
-      <div className="fixed bottom-16 right-4 flex flex-col gap-2 z-50">
+      <div className="fixed bottom-20 right-4 flex flex-col gap-2 z-[9999]">
         <button
           onClick={handleExport}
           className="bg-white border border-gray-200 shadow-md text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-50 transition-all"
