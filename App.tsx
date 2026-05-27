@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react"; import ReactDOM from "react-dom";
 import confetti from "canvas-confetti";
 import { Onboarding } from "./Onboarding"
 import { Board } from "./Board"
@@ -243,30 +243,30 @@ export default function App() {
         onDeleteNote={handleDeleteNote}
       />
 
-      {/* ✅ 匯出／匯入按鈕（固定在右下角） */}
-      <div className="fixed bottom-20 right-4 flex flex-col gap-2 z-[9999]">
-        <button
-          onClick={handleExport}
-          className="bg-white border border-gray-200 shadow-md text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-50 transition-all"
-          title="匯出備份"
-        >
-          💾 匯出
-        </button>
-        <button
-          onClick={() => importRef.current?.click()}
-          className="bg-white border border-gray-200 shadow-md text-sm font-medium px-4 py-2 rounded-xl hover:bg-gray-50 transition-all"
-          title="匯入備份"
-        >
-          📂 匯入
-        </button>
-        <input
-          ref={importRef}
-          type="file"
-          accept=".json"
-          onChange={handleImport}
-          className="hidden"
-        />
-      </div>
+      {ReactDOM.createPortal(
+  <div style={{ position: "fixed", bottom: "80px", right: "16px", zIndex: 9999, display: "flex", flexDirection: "column", gap: "8px" }}>
+    <button
+      onClick={handleExport}
+      style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+    >
+      💾 匯出
+    </button>
+    <button
+      onClick={() => importRef.current?.click()}
+      style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+    >
+      📂 匯入
+    </button>
+    <input
+      ref={importRef}
+      type="file"
+      accept=".json"
+      onChange={handleImport}
+      style={{ display: "none" }}
+    />
+  </div>,
+  document.body
+)}
     </div>
   );
 }
