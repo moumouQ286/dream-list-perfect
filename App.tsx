@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
 import confetti from "canvas-confetti";
 import { Onboarding } from "./Onboarding"
 import { Board } from "./Board"
@@ -216,7 +215,6 @@ export default function App() {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
-  // ✅ portal 移到 wrapper div 外面
   return (
     <>
       <Board
@@ -238,31 +236,16 @@ export default function App() {
         onAddNote={handleAddNote}
         onUpdateNote={handleUpdateNote}
         onDeleteNote={handleDeleteNote}
+        onExport={handleExport}
+        onImport={() => importRef.current?.click()}
       />
-      {ReactDOM.createPortal(
-        <div style={{ position: "fixed", bottom: "80px", right: "16px", zIndex: 9999, display: "flex", flexDirection: "column", gap: "8px" }}>
-          <button
-            onClick={handleExport}
-            style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
-          >
-            💾 匯出
-          </button>
-          <button
-            onClick={() => importRef.current?.click()}
-            style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
-          >
-            📂 匯入
-          </button>
-          <input
-            ref={importRef}
-            type="file"
-            accept=".json"
-            onChange={handleImport}
-            style={{ display: "none" }}
-          />
-        </div>,
-        document.body
-      )}
+      <input
+        ref={importRef}
+        type="file"
+        accept=".json"
+        onChange={handleImport}
+        style={{ display: "none" }}
+      />
     </>
   );
 }
