@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react"; import ReactDOM from "react-dom";
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import confetti from "canvas-confetti";
 import { Onboarding } from "./Onboarding"
 import { Board } from "./Board"
@@ -67,7 +68,6 @@ export default function App() {
     localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
   }, [userAge, onboardingComplete, notes, boardTitle, boardSubtitle, tabs, initialized]);
 
-  // ✅ 匯出：下載 JSON 檔案到本地
   const handleExport = () => {
     const data = {
       version: 1,
@@ -84,7 +84,6 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  // ✅ 匯入：讀取 JSON 檔案並載入資料
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -104,10 +103,7 @@ export default function App() {
         setBoardSubtitle(subtitle || "人生夢想清單");
         setTabs(savedTabs || AGE_TABS);
         setNotes(data.notes);
-
-        const validTab = (savedTabs || AGE_TABS)[0];
-        setCurrentTab(validTab);
-
+        setCurrentTab((savedTabs || AGE_TABS)[0]);
         alert("✅ 載入成功！");
       } catch {
         alert("❌ 檔案讀取失敗，請確認檔案是否正確。");
@@ -220,8 +216,9 @@ export default function App() {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
+  // ✅ portal 移到 wrapper div 外面
   return (
-    <div className="relative w-full h-full">
+    <>
       <Board
         userAge={userAge}
         currentTab={currentTab}
@@ -242,31 +239,30 @@ export default function App() {
         onUpdateNote={handleUpdateNote}
         onDeleteNote={handleDeleteNote}
       />
-
       {ReactDOM.createPortal(
-  <div style={{ position: "fixed", bottom: "80px", right: "16px", zIndex: 9999, display: "flex", flexDirection: "column", gap: "8px" }}>
-    <button
-      onClick={handleExport}
-      style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
-    >
-      💾 匯出
-    </button>
-    <button
-      onClick={() => importRef.current?.click()}
-      style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
-    >
-      📂 匯入
-    </button>
-    <input
-      ref={importRef}
-      type="file"
-      accept=".json"
-      onChange={handleImport}
-      style={{ display: "none" }}
-    />
-  </div>,
-  document.body
-)}
-    </div>
+        <div style={{ position: "fixed", bottom: "80px", right: "16px", zIndex: 9999, display: "flex", flexDirection: "column", gap: "8px" }}>
+          <button
+            onClick={handleExport}
+            style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+          >
+            💾 匯出
+          </button>
+          <button
+            onClick={() => importRef.current?.click()}
+            style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "8px 16px", fontSize: "14px", fontWeight: 500, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+          >
+            📂 匯入
+          </button>
+          <input
+            ref={importRef}
+            type="file"
+            accept=".json"
+            onChange={handleImport}
+            style={{ display: "none" }}
+          />
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
