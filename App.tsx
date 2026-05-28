@@ -258,36 +258,38 @@ export default function App() {
   }
 
   return (
-    <>
-      <Board
-        userAge={userAge}
-        currentTab={currentTab}
-        onTabChange={setCurrentTab}
-        notes={notes}
-        boardTitle={boardTitle}
-        boardSubtitle={boardSubtitle}
-        showAllNotes={showAllNotes}
-        tabs={tabs}
-        onUpdateBoardTitle={setBoardTitle}
-        onUpdateBoardSubtitle={setBoardSubtitle}
-        onToggleShowAll={() => setShowAllNotes(!showAllNotes)}
-        onAddTab={handleAddTab}
-        onUpdateTab={handleUpdateTab}
-        onReorderTabs={handleReorderTabs}
-        onDeleteTab={handleDeleteTab}
-        onAddNote={handleAddNote}
-        onUpdateNote={handleUpdateNote}
-        onDeleteNote={handleDeleteNote}
-        onExport={() => {}}
-        onImport={() => importRef.current?.click()}
-      />
-      <input
-        ref={importRef}
-        type="file"
-        accept=".json"
-        onChange={handleImport}
-        style={{ display: "none" }}
-      />
-    </>
-  );
-}
+  <>
+    <Board
+      userAge={userAge}
+      currentTab={currentTab}
+      onTabChange={setCurrentTab}
+      notes={notes}
+      boardTitle={boardTitle}
+      boardSubtitle={boardSubtitle}
+      showAllNotes={showAllNotes}
+      tabs={tabs}
+      onUpdateBoardTitle={setBoardTitle}
+      onUpdateBoardSubtitle={setBoardSubtitle}
+      onToggleShowAll={() => setShowAllNotes(!showAllNotes)}
+      onAddTab={handleAddTab}
+      onUpdateTab={handleUpdateTab}
+      onReorderTabs={handleReorderTabs}
+      onDeleteTab={handleDeleteTab}
+      onAddNote={handleAddNote}
+      onUpdateNote={handleUpdateNote}
+      onDeleteNote={handleDeleteNote}
+      onExport={() => {}}
+      onImport={() => importRef.current?.click()}
+    />
+    <input
+      ref={importRef}
+      type="file"
+      accept=".json"
+      onChange={handleImport}
+      style={{ display: "none" }}
+    />
+    <div style={{position:'fixed', bottom:'100px', right:'20px', zIndex:999999, background:'red', padding:'10px', color:'white', fontSize:'16px'}}>
+      TEST
+    </div>
+  </>
+);
