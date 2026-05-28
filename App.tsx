@@ -19,17 +19,6 @@ export default function App() {
   const [showAllNotes, setShowAllNotes] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
-  const notesRef = useRef(notes);
-  const userAgeRef = useRef(userAge);
-  const boardTitleRef = useRef(boardTitle);
-  const boardSubtitleRef = useRef(boardSubtitle);
-  const tabsRef = useRef(tabs);
-
-  useEffect(() => { notesRef.current = notes; }, [notes]);
-  useEffect(() => { userAgeRef.current = userAge; }, [userAge]);
-  useEffect(() => { boardTitleRef.current = boardTitle; }, [boardTitle]);
-  useEffect(() => { boardSubtitleRef.current = boardSubtitle; }, [boardSubtitle]);
-  useEffect(() => { tabsRef.current = tabs; }, [tabs]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem(STORAGE_KEY_USER);
@@ -78,63 +67,31 @@ export default function App() {
     localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
   }, [userAge, onboardingComplete, notes, boardTitle, boardSubtitle, tabs, initialized]);
 
-  // ✅ 直接把匯出／匯入按鈕插入 footer DOM
-  useEffect(() => {
-    if (!initialized || !onboardingComplete) return;
-
-    const timer = setTimeout(() => {
-      const footer = document.querySelector('footer');
-      if (!footer || document.getElementById('export-btn')) return;
-
-      const exportBtn = document.createElement('button');
-      exportBtn.id = 'export-btn';
-      exportBtn.textContent = '💾 匯出';
-      exportBtn.style.cssText = 'padding:4px 12px; border-radius:20px; border:1px solid #D1D1D6; background:white; cursor:pointer; font-size:11px; margin-left:8px;';
-      exportBtn.onclick = () => {
-        const data = {
-          version: 1,
-          exportedAt: new Date().toISOString(),
-          user: {
-            age: userAgeRef.current,
-            onboardingComplete: true,
-            title: boardTitleRef.current,
-            subtitle: boardSubtitleRef.current,
-            tabs: tabsRef.current
-          },
-          notes: notesRef.current,
-        };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `dream-board-${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-      };
-
-      const importBtn = document.createElement('button');
-      importBtn.id = 'import-btn';
-      importBtn.textContent = '📂 匯入';
-      importBtn.style.cssText = 'padding:4px 12px; border-radius:20px; border:1px solid #D1D1D6; background:white; cursor:pointer; font-size:11px; margin-left:8px;';
-      importBtn.onclick = () => importRef.current?.click();
-
-      footer.appendChild(exportBtn);
-      footer.appendChild(importBtn);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [initialized, onboardingComplete]);
+  const handleExport = () => {
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      user: { age: userAge, onboardingComplete, title: boardTitle, subtitle: boardSubtitle, tabs },
+      notes,
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `dream-board-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target?.result as string);
         if (!data.user || !data.notes) {
-          alert("檔案格式錯誤，請選擇正確的備份檔案。");
+          alert("檔案格式錯誤");
           return;
         }
         const { age, onboardingComplete, title, subtitle, tabs: savedTabs } = data.user;
@@ -147,7 +104,7 @@ export default function App() {
         setCurrentTab((savedTabs || AGE_TABS)[0]);
         alert("✅ 載入成功！");
       } catch {
-        alert("❌ 檔案讀取失敗，請確認檔案是否正確。");
+        alert("❌ 讀取失敗");
       }
     };
     reader.readAsText(file);
@@ -157,16 +114,13 @@ export default function App() {
   const handleOnboardingComplete = (age: number) => {
     setUserAge(age);
     setOnboardingComplete(true);
-
     const decade = Math.floor(age / 10) * 10;
     const initialTab = `${decade}s` as AgeTab;
-
     let newTabs = [...tabs];
     if (decade > 60 && !newTabs.includes(initialTab)) {
       newTabs = [...newTabs, initialTab];
       setTabs(newTabs);
     }
-
     const validTab = newTabs.includes(initialTab) ? initialTab : newTabs[0];
     setCurrentTab(validTab);
   };
@@ -258,38 +212,34 @@ export default function App() {
   }
 
   return (
-  <>
-    <Board
-      userAge={userAge}
-      currentTab={currentTab}
-      onTabChange={setCurrentTab}
-      notes={notes}
-      boardTitle={boardTitle}
-      boardSubtitle={boardSubtitle}
-      showAllNotes={showAllNotes}
-      tabs={tabs}
-      onUpdateBoardTitle={setBoardTitle}
-      onUpdateBoardSubtitle={setBoardSubtitle}
-      onToggleShowAll={() => setShowAllNotes(!showAllNotes)}
-      onAddTab={handleAddTab}
-      onUpdateTab={handleUpdateTab}
-      onReorderTabs={handleReorderTabs}
-      onDeleteTab={handleDeleteTab}
-      onAddNote={handleAddNote}
-      onUpdateNote={handleUpdateNote}
-      onDeleteNote={handleDeleteNote}
-      onExport={() => {}}
-      onImport={() => importRef.current?.click()}
-    />
-    <input
-      ref={importRef}
-      type="file"
-      accept=".json"
-      onChange={handleImport}
-      style={{ display: "none" }}
-    />
-    <div style={{position:'fixed', bottom:'100px', right:'20px', zIndex:999999, background:'red', padding:'10px', color:'white', fontSize:'16px'}}>
-      TEST
-    </div>
-  </>
-);
+    <>
+      <Board
+        userAge={userAge}
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        notes={notes}
+        boardTitle={boardTitle}
+        boardSubtitle={boardSubtitle}
+        showAllNotes={showAllNotes}
+        tabs={tabs}
+        onUpdateBoardTitle={setBoardTitle}
+        onUpdateBoardSubtitle={setBoardSubtitle}
+        onToggleShowAll={() => setShowAllNotes(!showAllNotes)}
+        onAddTab={handleAddTab}
+        onUpdateTab={handleUpdateTab}
+        onReorderTabs={handleReorderTabs}
+        onDeleteTab={handleDeleteTab}
+        onAddNote={handleAddNote}
+        onUpdateNote={handleUpdateNote}
+        onDeleteNote={handleDeleteNote}
+      />
+      <input
+        ref={importRef}
+        type="file"
+        accept=".json"
+        onChange={handleImport}
+        style={{ display: "none" }}
+      />
+    </>
+  );
+}
